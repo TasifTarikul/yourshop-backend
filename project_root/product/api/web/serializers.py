@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from project_root.product.models import Category
 
-class CategorySerializer(serializers.Serializer):
+class ListCategorySerializer(serializers.Serializer):
 
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
-    # parent = serializers.IntegerField(read_only=True)
+    # parent = ListCategorySerializer()
     # children = serializers.CharField(required=False, allow_blank=True, max_length=100)
     # class Meta:
     #     model = Category
@@ -16,7 +16,7 @@ class CategorySerializer(serializers.Serializer):
     #     ]
     
     def get_fields(self):
-        fields = super(CategorySerializer, self).get_fields()
-        fields['parent'] = CategorySerializer()
-        fields['children'] = CategorySerializer(required=False, many=True)
+        fields = super(ListCategorySerializer, self).get_fields()
+        fields['parent'] = ListCategorySerializer()
+        fields['children'] = ListCategorySerializer(required=False, many=True)
         return fields

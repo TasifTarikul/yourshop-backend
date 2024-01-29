@@ -1,17 +1,20 @@
 from rest_framework.generics import ListAPIView
-from project_root.product.models import Category
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .serializers import CategorySerializer
-from project_root.product.helpers import category_restructure
+
+from project_root.product.models import Category
+from .serializers import ListCategorySerializer
+from project_root.product.helpers import category_restructure_in_parent_child_format
 
 class CategoryListView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = ListCategorySerializer
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         parent_categories = queryset.filter(parent=None)
-        restructured_category = category_restructure(parent_categories, queryset)
+        restructured_category = category_restructure_in_parent_child_format(parent_categories, queryset)
         
         page = self.paginate_queryset(restructured_category)
         if page is not None:

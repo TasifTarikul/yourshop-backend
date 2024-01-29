@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+
+from rest_framework.settings import api_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +27,7 @@ SECRET_KEY = 'django-insecure-z9c^us=evc-ta@a04c65k*qt^#hx(pipzc^2=sk7fqv1$=84n%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -36,11 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 3rd-party apps
     'rest_framework',
     'corsheaders',
-    'project_root.api_app.apps.ApiAppConfig',
+    'knox',
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
+    'rest_framework_swagger',
+    'drf_yasg',
+    # Local
     'project_root.coreapp.apps.CoreappConfig',
-    'project_root.product.apps.ProductConfig'
+    'project_root.api_app.apps.ApiAppConfig',
+    'project_root.cart.apps.CartConfig',
+    'project_root.product.apps.ProductConfig',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +79,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -87,10 +101,37 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'yourshopdev', 
         'USER': 'postgres',
-        'PASSWORD': 'dino243sorer mangsho',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost', 
         'PORT': '5432',
     }
+}
+
+# API
+
+REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'drf_social_oauth2.authentication.SocialAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
+REST_KNOX = {
+  'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+  'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+  'TOKEN_TTL': timedelta(hours=1),
+  'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+  'TOKEN_LIMIT_PER_USER': None,
+  'AUTO_REFRESH': False,
+  'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
+  'AUTH_HEADER_PREFIX': 'Bearer'
 }
 
 
@@ -139,4 +180,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+]
+
+AUTH_USER_MODEL = 'coreapp.User'
+
+AUTHENTICATION_BACKENDS = [
+    'project_root.coreapp.auth_backends.EmailBackend',
+    # Google  OAuth2
+    'social_core.backends.google.GoogleOAuth2',
+    # drf-social-oauth2
+    'drf_social_oauth2.backends.DjangoOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+    ]
+
+# Google configuration
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '106828971655-dhjqrif0q84k9si1s02dlpvh1giru6du.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+# Define SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE to get extra permissions from Google.
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
 ]
