@@ -29,7 +29,7 @@ class ProductVariant(BaseModel):
     
 class ProductImage(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')
-    image = models.FileField()
+    image = models.CharField(max_length=300)
     display_picture = models.BooleanField(default=False)
 
     def __str__(self):
@@ -39,7 +39,7 @@ class Attribute(BaseModel):
     title = models.CharField(max_length=100)
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE, related_name='attributes')
     value = models.CharField(max_length=100)
-    image = models.FileField(null=True, blank=True)
+    image = models.CharField(max_length=300,null=True, blank=True)
 
     class Meta:
         # Define a unique constraint on ('title', 'product_variant') with case-insensitive comparison
@@ -53,43 +53,4 @@ class Attribute(BaseModel):
 
     def __str__(self):
         return self.title
-
     
-# class ProductVariant(BaseModel):
-#     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='product_variants')
-#     price = models.FloatField()
-#     qty = models.BigIntegerField()
-#     sku = models.CharField(max_length=100)
-#     description= models.TextField(max_length=5000)
-#     attributes = models.ManyToManyField('Attribute', related_name='product_variants')
-
-#     def __str__(self):
-#         return self.product.title
-    
-# class ProductImage(BaseModel):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')
-#     image = models.FileField()
-#     display_picture = models.BooleanField(default=False)
-
-#     def __str__(self):
-#         return self.product.title
-
-# class Attribute(BaseModel):
-#     title = models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return self.title
-    
-# class AttributeValue(BaseModel):
-#     title = models.CharField(max_length=100)
-#     attribute = models.ForeignKey(Attribute,on_delete=models.CASCADE, related_name='attribute_values')
-#     product_variant = models.ManyToManyField(ProductVariant, related_name='attribute_values')
-    
-
-#     def __str__(self):
-#         return self.title
-
-# class AttributeValueImage(BaseModel):
-#     image = models.FileField(null=True, blank=True)
-#     attribute_value = models.ForeignKey(AttributeValue, on_delete=models.CASCADE)
-#     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)

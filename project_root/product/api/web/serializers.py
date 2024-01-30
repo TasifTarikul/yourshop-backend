@@ -17,6 +17,6 @@ class ListCategorySerializer(serializers.Serializer):
     
     def get_fields(self):
         fields = super(ListCategorySerializer, self).get_fields()
-        fields['parent'] = ListCategorySerializer()
-        fields['children'] = ListCategorySerializer(required=False, many=True)
+        # fields['parent'] = ListCategorySerializer()
+        # fields['children'] = ListCategorySerializer(required=False, many=True)
         return fields
