@@ -12,22 +12,28 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+import environ
 
 from rest_framework.settings import api_settings
 
+
+env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
+# Take environment variables from .env_base file
+environ.Env.read_env(os.path.join(BASE_DIR, 'env/.env_base'))
+
+# Database
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z9c^us=evc-ta@a04c65k*qt^#hx(pipzc^2=sk7fqv1$=84n%'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = env('SECRET_KEY')
 
 
 # Application definition
@@ -87,25 +93,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'yourshopdev', 
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost', 
-        'PORT': '5432',
-    }
-}
 
 # API
 
