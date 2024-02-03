@@ -7,6 +7,10 @@
 ARG PYTHON_VERSION=3.8.10
 FROM python:${PYTHON_VERSION}-slim as base
 
+
+# To check inside django project whether its running inside a docker container, see config/settings/local.py
+ENV DOCKER_CONTAINER=True
+
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -33,7 +37,7 @@ ARG UID=10001
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
 # into this layer.
 RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements/local.txt,target=requirements/local.txt \
+    --mount=type=bind,source=requirements,target=requirements \
     python -m pip install -r requirements/local.txt
 
 # RUN groupadd yourshopusers \

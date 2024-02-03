@@ -33,9 +33,9 @@ services:
       - db-password
     volumes:
       - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=yourshopdev
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    env_file:
+      - ./env/.env_base
+      - ./env/.env_local
     ports:
       - "5449:5449"
     healthcheck:

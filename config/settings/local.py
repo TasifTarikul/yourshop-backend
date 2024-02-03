@@ -6,7 +6,6 @@ environ.Env.read_env(os.path.join(BASE_DIR, 'env/.env_local'))
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
@@ -21,3 +20,5 @@ DATABASES = {
         'PORT': env('DB_PORT'),
     }
 }
+if os.environ.get('DOCKER_CONTAINER'):
+    DATABASES['default']['HOST']=env('DB_HOST_DOCKER')
