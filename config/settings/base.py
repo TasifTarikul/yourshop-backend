@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'project_root.api_app.apps.ApiAppConfig',
     'project_root.cart.apps.CartConfig',
     'project_root.product.apps.ProductConfig',
+    'project_root.notification.NotificationConfig'
 ]
 
 MIDDLEWARE = [
