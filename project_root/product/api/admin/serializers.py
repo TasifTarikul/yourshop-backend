@@ -1,6 +1,11 @@
+from collections import Counter
+
+from django.db import transaction
+
 from rest_framework import serializers
-from rest_framework.utils import model_meta
-from project_root.product.models import Product, ProductVariant, ProductImage, Attribute, Category
+from rest_framework.exceptions import ValidationError
+
+from project_root.product.models import Product, ProductVariant, ProductImage, Attribute
 
 class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,6 +18,27 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = ('price', 'qty', 'sku', 'description', 'attributes')
+
+    def find_duplicate_strings(self, lst):
+        lowercase_strings = [s.lower() for s in lst]
+        # Use Counter to count occurrences of each string
+        string_counts = Counter(lowercase_strings)
+        # Find strings with counts greater than 1 (indicating duplicates)
+        duplicates = [string for string, count in string_counts.items() if count > 1]
+        return duplicates
+    
+    def validate_attributes(self, attributes):
+        attrs_title_values = []
+        for attr_set in attributes:
+            attrs_title_values.append(attr_set['title'])
+        duplicates = self.find_duplicate_strings(attrs_title_values)
+        if duplicates:
+            if len(duplicates) > 1:
+                raise ValidationError(f"Attributes cannot have duplicate titles - {', '.join(duplicates)}")
+            else:
+                raise ValidationError(f"Attributes cannot have duplicate title - {duplicates[0]}")
+        return attributes
+        
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,8 +53,10 @@ class AddProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('title','category','product_variants','product_images')
 
+    
     # takes the list of attributes of a product variant and create product variant object
     def create_attribute_obj(self,product_variant_obj, attribute_list):
+        print(attribute_list)
         for product_variant_attr in attribute_list:
             attr_obj = Attribute()
             attr_obj.title = product_variant_attr['title']
@@ -41,6 +69,7 @@ class AddProductSerializer(serializers.ModelSerializer):
 
     # takes the list of product variants of a product and create product variant object
     def create_product_variant_obj(self, product_obj, product_variant_list):
+        print(product_variant_list)
         for product_variant in product_variant_list:
             product_variant_obj = ProductVariant()
             product_variant_obj.price = product_variant['price']
@@ -49,6 +78,7 @@ class AddProductSerializer(serializers.ModelSerializer):
             product_variant_obj.description = product_variant['description']
             product_variant_obj.product = product_obj
             product_variant_obj.save()
+            print(product_variant['attributes'])
             self.create_attribute_obj(product_variant_obj, product_variant['attributes'])
         return
     # takes the list of product images of a product and create product image object
@@ -71,12 +101,12 @@ class AddProductSerializer(serializers.ModelSerializer):
         self.create_product_variant_obj(product_obj, pv_list)
         self.create_product_image_obj(product_obj, p_image_list)
         return product_obj
-    
+
     # override create method to save objects of multiple Models
+    @transaction.atomic
     def create(self, validated_data):
         product_obj = self.create_product_obj(validated_data['title'], 
                                               validated_data['category'], 
                                               validated_data['product_variants'],
                                               validated_data['product_images'])
         return product_obj
-

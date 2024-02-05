@@ -1,7 +1,10 @@
 from django.db import models
+from django.contrib.postgres.fields import CIText
+from django.db.models import UniqueConstraint
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from project_root.coreapp.models import BaseModel
-from django.db.models import UniqueConstraint
 # Create your models here.
 
 class Category(BaseModel):
@@ -25,7 +28,7 @@ class ProductVariant(BaseModel):
     description= models.TextField(max_length=5000)
 
     def __str__(self):
-        return self.product.title
+        return self.product.title + ', sku-' + self.sku
     
 class ProductImage(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')
@@ -35,21 +38,13 @@ class ProductImage(BaseModel):
     def __str__(self):
         return self.product.title
 
+
 class Attribute(BaseModel):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE, related_name='attributes')
     value = models.CharField(max_length=100)
-    image = models.CharField(max_length=300,null=True, blank=True)
+    image = models.CharField(max_length=300, null=True, blank=True)
 
-    class Meta:
-        # Define a unique constraint on ('title', 'product_variant') with case-insensitive comparison
-        constraints = [
-            UniqueConstraint(
-                fields=['title', 'product_variant'],
-                name='unique_title_per_variant',
-                condition=models.Q(title__iexact=models.F('title'))
-            )
-        ]
 
     def __str__(self):
         return self.title
