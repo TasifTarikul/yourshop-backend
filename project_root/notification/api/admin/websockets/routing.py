@@ -1,14 +1,8 @@
-from django.urls import path
+from django.urls import path, re_path
 
-from channels.routing import ProtocolTypeRouter, URLRouter
 
 from .consumers import NotificationConsumer
 
-urlpatterns = [
-    path('ws/<room_name>/', NotificationConsumer.as_asgi())
+websocket_urlpatterns = [
+    re_path(r'ws/notification/admin/(?P<room_name>\w+)/$', NotificationConsumer.as_asgi()), 
 ]
-
-application = ProtocolTypeRouter({
-    'websocket': URLRouter(urlpatterns),
-})
-

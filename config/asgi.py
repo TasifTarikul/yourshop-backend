@@ -16,14 +16,14 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 
 
-from project_root.notification.routing import websocket_urlpatterns
+from project_root.notification.api.admin.websockets.routing import websocket_urlpatterns
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
 
 django_asgi_app = get_asgi_application()
 
-import project_root.notification.routing
+import project_root.notification.api.admin.websockets.routing
 
 application = ProtocolTypeRouter(
     {
