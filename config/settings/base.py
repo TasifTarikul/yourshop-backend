@@ -39,6 +39,7 @@ SECRET_KEY = env('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,7 +60,7 @@ INSTALLED_APPS = [
     'project_root.api_app.apps.ApiAppConfig',
     'project_root.cart.apps.CartConfig',
     'project_root.product.apps.ProductConfig',
-    'project_root.notification.NotificationConfig'
+    'project_root.notification.apps.NotificationConfig'
 ]
 
 MIDDLEWARE = [

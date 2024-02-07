@@ -7,6 +7,6 @@ urlpatterns = [
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
     path('product/web/', include('project_root.product.api.web.urls')),
     path('product/admin/', include('project_root.product.api.admin.urls')),
-    path('cart/web/', include('project_root.cart.api.web.urls'))
+    path('cart/web/', include('project_root.cart.api.web.urls')),
 ]
 

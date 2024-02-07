@@ -10,6 +10,11 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
+INSTALLED_APPS + [
+    # Third Party Apps
+    'channels'       
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -22,3 +27,14 @@ DATABASES = {
 }
 if os.environ.get('DOCKER_CONTAINER'):
     DATABASES['default']['HOST']=env('DB_HOST_DOCKER')
+
+ASGI_APPLICATION = "config.asgi.application" #routing.py will handle the ASGI
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+        }
+    }
