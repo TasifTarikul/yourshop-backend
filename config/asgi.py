@@ -23,7 +23,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
 
 django_asgi_app = get_asgi_application()
 
-import project_root.notification.api.admin.websockets.routing
 
 application = ProtocolTypeRouter(
     {

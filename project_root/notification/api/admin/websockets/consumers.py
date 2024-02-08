@@ -9,6 +9,7 @@ class NotificationConsumer(WebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'notification_%s' % self.room_name
         print(self.room_group_name)
+        print(self.channel_layer)
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -37,8 +38,8 @@ class NotificationConsumer(WebsocketConsumer):
             }
         )
 
-    def chat_message(self, event):
-        print('chat_message')
+    def notify(self, event):
+        print('tasif consumer')
         # Receive message from room group
         text = event['message']
         # Send message to WebSocket
