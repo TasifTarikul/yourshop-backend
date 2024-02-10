@@ -56,7 +56,6 @@ class AddProductSerializer(serializers.ModelSerializer):
     
     # takes the list of attributes of a product variant and create product variant object
     def create_attribute_obj(self,product_variant_obj, attribute_list):
-        print(attribute_list)
         for product_variant_attr in attribute_list:
             attr_obj = Attribute()
             attr_obj.title = product_variant_attr['title']

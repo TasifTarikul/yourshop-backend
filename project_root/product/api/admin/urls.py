@@ -1,6 +1,13 @@
-from django.urls import path
-from .views import AddProductView
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
+
+from .views import ProductView
+
+router = DefaultRouter(trailing_slash=False)
+router.register('admin-product', ProductView)
 
 urlpatterns = [
-    path('add-product', AddProductView.as_view())
+    path('', include(router.urls))
 ]
+
