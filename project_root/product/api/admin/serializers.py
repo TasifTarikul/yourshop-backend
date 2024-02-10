@@ -10,14 +10,16 @@ from project_root.product.models import Product, ProductVariant, ProductImage, A
 class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attribute
-        fields = ('title', 'value', 'image')
+        fields = ('id','title', 'value', 'image')
+        read_only_fields = ('id', )
         
 
 class ProductVariantSerializer(serializers.ModelSerializer):
     attributes = AttributeSerializer(many=True)
     class Meta:
         model = ProductVariant
-        fields = ('price', 'qty', 'sku', 'description', 'attributes')
+        fields = ('id','price', 'qty', 'sku', 'description', 'attributes')
+        read_only_fields = ('id', )
 
     def find_duplicate_strings(self, lst):
         lowercase_strings = [s.lower() for s in lst]
@@ -43,7 +45,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ('image', 'display_picture')
+        fields = ('id','image', 'display_picture')
+        read_only_fields = ('id', )
 
 class AddProductSerializer(serializers.ModelSerializer):
     product_variants = ProductVariantSerializer(many=True)
@@ -51,7 +54,8 @@ class AddProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('title','category','product_variants','product_images')
+        fields = ('id','title','category','product_variants','product_images')
+        read_only_fields = ('id', )
 
     
     # takes the list of attributes of a product variant and create product variant object
