@@ -5,16 +5,21 @@ from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters import rest_framework as filters
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from project_root.product.models import Product
+
 from .serializers import ProductSerializer, UpdateProductSerializer
+from .filters import ProductFilter
 
 class ProductView(viewsets.ModelViewSet):
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ProductFilter
 
     def get_success_headers(self, data):
         # You can add custom headers here

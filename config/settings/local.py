@@ -12,7 +12,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS + [
     # Third Party Apps
-    'channels'       
+    'channels',
+    'django_filters',      
 ]
 
 DATABASES = {

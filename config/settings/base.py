@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'social_django',
     'drf_social_oauth2',
     'rest_framework_swagger',
-    'drf_yasg',
+    'drf_yasg', 
     # Local
     'project_root.coreapp.apps.CoreappConfig',
     'project_root.api_app.apps.ApiAppConfig',
@@ -102,6 +102,11 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
+    # django_filters configuration below does not work
+    # 'DEFAULT_FILTER_BACKENDS': (
+    #     'django_filters.rest_framework.DjangoFilterBackend',
+    # ),
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'knox.auth.TokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
