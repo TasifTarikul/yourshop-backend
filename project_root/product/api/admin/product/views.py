@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from django_filters import rest_framework as filters
 from channels.layers import get_channel_layer
@@ -19,6 +20,7 @@ class ProductView(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filterset_class = ProductFilter
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get_success_headers(self, data):
         # You can add custom headers here
