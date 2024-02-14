@@ -18,13 +18,11 @@ class ProductView(viewsets.ModelViewSet):
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ProductFilter
 
     def get_success_headers(self, data):
         # You can add custom headers here
         headers = super().get_success_headers(data)
-        print(headers)
         headers['Custom-Header'] = 'some value addeds'
         return headers
 
@@ -47,7 +45,6 @@ class ProductView(viewsets.ModelViewSet):
         #         "message": "product added"
         #     },
         # )
-        print(headers)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
 
