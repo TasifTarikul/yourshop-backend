@@ -45,9 +45,13 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ('id','title','category','product_variants','product_images')
 
     # takes the list of attributes of a product variant and create product variant object
-    def create_attribute_obj(self,product_variant_obj, attribute_list):
+    def attribute_obj(self,product_variant_obj, attribute_list):
         for product_variant_attr in attribute_list:
-            attr_obj = Attribute()
+            attr_obj = None
+            if 'id' in product_variant_attr:
+                attr_obj = Attribute.objects.get(id=product_variant_attr['id'])
+            else:
+                attr_obj = Attribute()
             attr_obj.title = product_variant_attr['title']
             attr_obj.value = product_variant_attr['value']
             if 'image' in product_variant_attr.keys():
@@ -56,22 +60,31 @@ class ProductSerializer(serializers.ModelSerializer):
             attr_obj.save()
         return
 
-    # takes the list of product variants of a product and create product variant object
-    def create_product_variant_obj(self, product_obj, product_variant_list):
+    # takes the list of product variants of a product and create/update product variant object
+    def product_variant_obj(self, product_obj, product_variant_list):
         for product_variant in product_variant_list:
-            product_variant_obj = ProductVariant()
+            product_variant_obj = None
+            if 'id' in product_variant:
+                product_variant_obj = ProductVariant.objects.get(id=product_variant['id'])
+            else:
+                product_variant_obj = ProductVariant()
             product_variant_obj.price = product_variant['price']
             product_variant_obj.qty = product_variant['qty']
             product_variant_obj.sku = product_variant['sku']
             product_variant_obj.description = product_variant['description']
             product_variant_obj.product = product_obj
             product_variant_obj.save()
-            self.create_attribute_obj(product_variant_obj, product_variant['attributes'])
+            self.attribute_obj(product_variant_obj, product_variant['attributes'])
         return
-    # takes the list of product images of a product and create product image object
-    def create_product_image_obj(self, product_obj, product_image_list):
+
+    # takes the list of product images of a product and create/update product image object
+    def product_image_obj(self, product_obj, product_image_list):
         for product_image in product_image_list:
-            product_image_obj = ProductImage()
+            product_image_obj = None
+            if 'id' in product_image:
+                product_image_obj = ProductImage.objects.get(id=product_image['id'])
+            else:
+                product_image_obj = ProductImage()
             product_image_obj.image = product_image['image']
             if 'display_picture' in product_image.keys():
                 product_image_obj.display_picture = product_image['display_picture']
@@ -79,23 +92,29 @@ class ProductSerializer(serializers.ModelSerializer):
             product_image_obj.save()
         return
             
-    # Creates a product object
-    def create_product_obj(self, title, category, prodcut_variant_list, product_image_list):
-        product_obj = Product()
-        product_obj.title = title
-        product_obj.category = category
+    # Creates/Updates a product object
+    def product_obj(self, **kwargs):
+        product_obj = None
+        if 'product_obj' in kwargs:
+            product_obj = kwargs['product_obj']
+        else:
+            product_obj = Product()
+        product_obj.title = kwargs['title']
+        product_obj.category = kwargs['category']
         product_obj.save()
-        self.create_product_variant_obj(product_obj, prodcut_variant_list)
-        self.create_product_image_obj(product_obj, product_image_list)
+        self.product_variant_obj(product_obj, kwargs['product_variants_list'])
+        self.product_image_obj(product_obj, kwargs['product_images_list'])
         return product_obj
 
     # override create method to save objects of multiple Models
     @transaction.atomic
     def create(self, validated_data):
-        product_obj = self.create_product_obj(validated_data['title'], 
-                                              validated_data['category'], 
-                                              validated_data['product_variants'],
-                                              validated_data['product_images'])
+        product_obj = self.product_obj(
+                                        title=validated_data['title'], 
+                                        category=validated_data['category'], 
+                                        product_variants_list=validated_data['product_variants'],
+                                        product_images_list=validated_data['product_images']
+                                    )
         return product_obj
 
 class UpdateAttributeSerializer(AttributeSerializer):
@@ -108,65 +127,21 @@ class UpdateProductVariantSerializer(ProductVariantSerializer):
 class UpdateProductImageSerializer(ProductImageSerializer):
     id = serializers.IntegerField(read_only=False)
     
-class UpdateProductSerializer(serializers.ModelSerializer):
+class UpdateProductSerializer(ProductSerializer):
     product_variants = UpdateProductVariantSerializer(many=True)
     product_images = UpdateProductImageSerializer(many=True)
 
     class Meta:
         model = Product
         fields = ('id','title','category','product_variants','product_images')
-
-    # takes the list of attributes of a product variant and update product variant object
-    def update_attribute_obj(self,product_variant_obj, attribute_list):
-        for product_variant_attr in attribute_list:
-            attr_obj = Attribute.objects.get(id=product_variant_attr['id'])
-            attr_obj.title = product_variant_attr['title']
-            attr_obj.value = product_variant_attr['value']
-            if 'image' in product_variant_attr.keys():
-                attr_obj.image = product_variant_attr['image']
-            attr_obj.product_variant = product_variant_obj
-            attr_obj.save()
-        return
-
-    # takes the list of product variants of a product and update product variant object
-    def update_product_variant_obj(self, product_obj, product_variant_list):
-        for product_variant in product_variant_list:
-            product_variant_obj = ProductVariant.objects.get(id=product_variant['id'])
-            product_variant_obj.price = product_variant['price']
-            product_variant_obj.qty = product_variant['qty']
-            product_variant_obj.sku = product_variant['sku']
-            product_variant_obj.description = product_variant['description']
-            product_variant_obj.product = product_obj
-            product_variant_obj.save()
-            self.update_attribute_obj(product_variant_obj, product_variant['attributes'])
-        return
-    # takes the list of product images of a product and update product image object
-    def update_product_image_obj(self, product_obj, product_image_list):
-        for product_image in product_image_list:
-            product_image_obj = ProductImage.objects.get(id=product_image['id'])
-            product_image_obj.image = product_image['image']
-            if 'display_picture' in product_image.keys():
-                product_image_obj.display_picture = product_image['display_picture']
-            product_image_obj.product = product_obj
-            product_image_obj.save()
-        return
-            
-    # updates a product object
-    def update_product_obj(self, product_obj, title, category, prodcut_variant_list, product_image_list):
-        product_obj.title = title
-        product_obj.category = category
-        product_obj.save()
-        self.update_product_variant_obj(product_obj, prodcut_variant_list)
-        self.update_product_image_obj(product_obj, product_image_list)
-        return product_obj
     
     @transaction.atomic
     def update(self,instance, validated_data):
-        product_obj = self.update_product_obj(
-                                                instance,
-                                                validated_data['title'], 
-                                                validated_data['category'], 
-                                                validated_data['product_variants'],
-                                                validated_data['product_images']
-                                            )
+        product_obj = self.product_obj(
+                                        product_obj=instance,
+                                        title=validated_data['title'], 
+                                        category=validated_data['category'], 
+                                        product_variants_list=validated_data['product_variants'],
+                                        product_images_list=validated_data['product_images']
+                                    )
         return product_obj
