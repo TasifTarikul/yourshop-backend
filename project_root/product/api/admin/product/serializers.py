@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from project_root.product.models import Product, ProductVariant, ProductImage, Attribute
+from project_root.product.helpers import find_duplicate_strings
 
 class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,20 +20,12 @@ class ProductVariantSerializer(serializers.ModelSerializer):
         model = ProductVariant
         fields = ('id','price', 'qty', 'sku', 'description', 'attributes')
         read_only_fields = ('id', )
-
-    def find_duplicate_strings(self, lst):
-        lowercase_strings = [s.lower() for s in lst]
-        # Use Counter to count occurrences of each string
-        string_counts = Counter(lowercase_strings)
-        # Find strings with counts greater than 1 (indicating duplicates)
-        duplicates = [string for string, count in string_counts.items() if count > 1]
-        return duplicates
     
     def validate_attributes(self, attributes):
         attrs_title_values = []
         for attr_set in attributes:
             attrs_title_values.append(attr_set['title'])
-        duplicates = self.find_duplicate_strings(attrs_title_values)
+        duplicates = find_duplicate_strings(attrs_title_values)
         if duplicates:
             if len(duplicates) > 1:
                 raise ValidationError(f"Attributes cannot have duplicate titles - {', '.join(duplicates)}")
@@ -122,21 +115,12 @@ class UpdateProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = ('id','price', 'qty', 'sku', 'description', 'attributes')
-        
-
-    def find_duplicate_strings(self, lst):
-        lowercase_strings = [s.lower() for s in lst]
-        # Use Counter to count occurrences of each string
-        string_counts = Counter(lowercase_strings)
-        # Find strings with counts greater than 1 (indicating duplicates)
-        duplicates = [string for string, count in string_counts.items() if count > 1]
-        return duplicates
     
     def validate_attributes(self, attributes):
         attrs_title_values = []
         for attr_set in attributes:
             attrs_title_values.append(attr_set['title'])
-        duplicates = self.find_duplicate_strings(attrs_title_values)
+        duplicates = find_duplicate_strings(attrs_title_values)
         if duplicates:
             if len(duplicates) > 1:
                 raise ValidationError(f"Attributes cannot have duplicate titles - {', '.join(duplicates)}")
