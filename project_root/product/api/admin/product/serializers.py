@@ -12,14 +12,12 @@ class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attribute
         fields = ('id','title', 'value', 'image')
-        read_only_fields = ('id', )
 
 class ProductVariantSerializer(serializers.ModelSerializer):
     attributes = AttributeSerializer(many=True)
     class Meta:
         model = ProductVariant
         fields = ('id','price', 'qty', 'sku', 'description', 'attributes')
-        read_only_fields = ('id', )
     
     def validate_attributes(self, attributes):
         attrs_title_values = []
@@ -37,7 +35,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ('id','image', 'display_picture')
-        read_only_fields = ('id', )
 
 class ProductSerializer(serializers.ModelSerializer):
     product_variants = ProductVariantSerializer(many=True)
@@ -46,7 +43,6 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id','title','category','product_variants','product_images')
-        read_only_fields = ('id', )
 
     # takes the list of attributes of a product variant and create product variant object
     def create_attribute_obj(self,product_variant_obj, attribute_list):
@@ -102,38 +98,15 @@ class ProductSerializer(serializers.ModelSerializer):
                                               validated_data['product_images'])
         return product_obj
 
-class UpdateAttributeSerializer(serializers.ModelSerializer):
+class UpdateAttributeSerializer(AttributeSerializer):
     id = serializers.IntegerField(read_only=False)
-    class Meta:
-        model = Attribute
-        fields = ('id','title', 'value', 'image')
     
-class UpdateProductVariantSerializer(serializers.ModelSerializer):
+class UpdateProductVariantSerializer(ProductVariantSerializer):
     id = serializers.IntegerField(read_only=False)
     attributes = UpdateAttributeSerializer(many=True)
-
-    class Meta:
-        model = ProductVariant
-        fields = ('id','price', 'qty', 'sku', 'description', 'attributes')
     
-    def validate_attributes(self, attributes):
-        attrs_title_values = []
-        for attr_set in attributes:
-            attrs_title_values.append(attr_set['title'])
-        duplicates = find_duplicate_strings(attrs_title_values)
-        if duplicates:
-            if len(duplicates) > 1:
-                raise ValidationError(f"Attributes cannot have duplicate titles - {', '.join(duplicates)}")
-            else:
-                raise ValidationError(f"Attributes cannot have duplicate title - {duplicates[0]}")
-        return attributes
-    
-class UpdateProductImageSerializer(serializers.ModelSerializer):
+class UpdateProductImageSerializer(ProductImageSerializer):
     id = serializers.IntegerField(read_only=False)
-
-    class Meta:
-        model = ProductImage
-        fields = ('id','image', 'display_picture')
     
 class UpdateProductSerializer(serializers.ModelSerializer):
     product_variants = UpdateProductVariantSerializer(many=True)
@@ -158,7 +131,6 @@ class UpdateProductSerializer(serializers.ModelSerializer):
     # takes the list of product variants of a product and update product variant object
     def update_product_variant_obj(self, product_obj, product_variant_list):
         for product_variant in product_variant_list:
-            print(product_variant)
             product_variant_obj = ProductVariant.objects.get(id=product_variant['id'])
             product_variant_obj.price = product_variant['price']
             product_variant_obj.qty = product_variant['qty']
@@ -190,8 +162,6 @@ class UpdateProductSerializer(serializers.ModelSerializer):
     
     @transaction.atomic
     def update(self,instance, validated_data):
-        print(validated_data)
-        print(self)
         product_obj = self.update_product_obj(
                                                 instance,
                                                 validated_data['title'], 
