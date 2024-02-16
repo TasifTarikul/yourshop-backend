@@ -3,11 +3,11 @@ This is a personal project (development in progress) where I have used different
 
 ## REST API
 Please check the following folders to see the REST apis I have worked on.
-- ** project_root > product > api **
-- ** project_root > core_app > api **
+- **project_root > product > api**
+- **project_root > core_app > api**
 
 ## WEB SOCKET
 Please check the following folders to see the WEBSOCKET apis I have worked on.
-- ** project_root > notification > api > admin > websockets **
+- **project_root > notification > api > admin > websockets**
 
 
