@@ -9,5 +9,3 @@ Please check the following folders to see the REST apis I have worked on.
 ## WEB SOCKET API
 Please check the following folders to see the WEBSOCKET apis I have worked on.
 - **project_root > notification > api > admin > websockets**
-
-
