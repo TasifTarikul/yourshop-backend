@@ -1,4 +1,5 @@
 from .base import *
+import sentry_sdk
 from rest_framework.settings import api_settings
 
 # Take environment variables from .env_local file
@@ -70,3 +71,14 @@ CHANNEL_LAYERS = {
         },
         }
     }
+
+sentry_sdk.init(
+    dsn="https://7958a554076320285c7718f71e4fd90c@o4506760653897728.ingest.sentry.io/4506760655536128",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
