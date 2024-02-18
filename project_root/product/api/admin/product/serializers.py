@@ -1,23 +1,25 @@
-from collections import Counter
-
 from django.db import transaction
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from project_root.product.models import Product, ProductVariant, ProductImage, Attribute
 from project_root.product.helpers import find_duplicate_strings
+from project_root.product.models import Product, ProductVariant, ProductImage, Attribute
+from project_root.product.api.admin.product_variant.serializers import ProductVariantSerializer
+from project_root.product.api.admin.attribute.serializers import AttributeSerializer
+from project_root.product.api.admin.product_image.serializers import ProductImageSerializer
 
-class AttributeSerializer(serializers.ModelSerializer):
+class CustomAttributeSerializer(AttributeSerializer):
     class Meta:
         model = Attribute
         fields = ('id','title', 'value', 'image')
 
-class ProductVariantSerializer(serializers.ModelSerializer):
-    attributes = AttributeSerializer(many=True)
+class CustomProductVariantSerializer(ProductVariantSerializer):
+    attributes = CustomAttributeSerializer(many=True)
+
     class Meta:
-        model = ProductVariant
-        fields = ('id','price', 'qty', 'sku', 'description', 'attributes')
+        model = ProductVariantSerializer.Meta.model
+        fields = ProductVariantSerializer.Meta.fields + ('attributes',)
     
     def validate_attributes(self, attributes):
         attrs_title_values = []
@@ -31,13 +33,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
                 raise ValidationError(f"Attributes cannot have duplicate title - {duplicates[0]}")
         return attributes
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = ('id','image', 'display_picture')
-
 class ProductSerializer(serializers.ModelSerializer):
-    product_variants = ProductVariantSerializer(many=True)
+    product_variants = CustomProductVariantSerializer(many=True)
     product_images = ProductImageSerializer(many=True)
 
     class Meta:
@@ -117,18 +114,18 @@ class ProductSerializer(serializers.ModelSerializer):
                                     )
         return product_obj
 
-class UpdateAttributeSerializer(AttributeSerializer):
+class UpdateCustomAttributeSerializer(CustomAttributeSerializer):
     id = serializers.IntegerField(read_only=False)
     
-class UpdateProductVariantSerializer(ProductVariantSerializer):
+class UpdateCustomProductVariantSerializer(CustomProductVariantSerializer):
     id = serializers.IntegerField(read_only=False)
-    attributes = UpdateAttributeSerializer(many=True)
+    attributes = UpdateCustomAttributeSerializer(many=True)
     
 class UpdateProductImageSerializer(ProductImageSerializer):
     id = serializers.IntegerField(read_only=False)
     
 class UpdateProductSerializer(ProductSerializer):
-    product_variants = UpdateProductVariantSerializer(many=True)
+    product_variants = UpdateCustomProductVariantSerializer(many=True)
     product_images = UpdateProductImageSerializer(many=True)
 
     class Meta:

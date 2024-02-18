@@ -2,11 +2,9 @@ from django.db.models import ProtectedError
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import viewsets
-from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
-from django_filters import rest_framework as filters
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -15,7 +13,7 @@ from project_root.product.models import Product
 from .serializers import ProductSerializer, UpdateProductSerializer
 from .filters import ProductFilter
 
-class ProductView(viewsets.ModelViewSet):
+class AdminProductView(viewsets.ModelViewSet):
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
