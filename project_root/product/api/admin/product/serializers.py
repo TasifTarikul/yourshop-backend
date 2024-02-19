@@ -33,9 +33,14 @@ class CustomProductVariantSerializer(ProductVariantSerializer):
                 raise ValidationError(f"Attributes cannot have duplicate title - {duplicates[0]}")
         return attributes
 
+class CustomProductImageSerializer(ProductImageSerializer):
+    class Meta:
+        model=ProductImageSerializer.Meta.model
+        fields=('id', 'display_picture', 'image')
+
 class ProductSerializer(serializers.ModelSerializer):
     product_variants = CustomProductVariantSerializer(many=True)
-    product_images = ProductImageSerializer(many=True)
+    product_images = CustomProductImageSerializer(many=True)
 
     class Meta:
         model = Product
@@ -121,7 +126,7 @@ class UpdateCustomProductVariantSerializer(CustomProductVariantSerializer):
     id = serializers.IntegerField(read_only=False)
     attributes = UpdateCustomAttributeSerializer(many=True)
     
-class UpdateProductImageSerializer(ProductImageSerializer):
+class UpdateProductImageSerializer(CustomProductImageSerializer):
     id = serializers.IntegerField(read_only=False)
     
 class UpdateProductSerializer(ProductSerializer):
