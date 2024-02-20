@@ -73,16 +73,16 @@ CHANNEL_LAYERS = {
         }
     }
 
-sentry_sdk.init(
-    dsn="https://7958a554076320285c7718f71e4fd90c@o4506760653897728.ingest.sentry.io/4506760655536128",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions.
-    # We recommend adjusting this value in production.
-    profiles_sample_rate=1.0,
-)
+# sentry_sdk.init(
+#     dsn="https://7958a554076320285c7718f71e4fd90c@o4506760653897728.ingest.sentry.io/4506760655536128",
+#     # Set traces_sample_rate to 1.0 to capture 100%
+#     # of transactions for performance monitoring.
+#     traces_sample_rate=1.0,
+#     # Set profiles_sample_rate to 1.0 to profile 100%
+#     # of sampled transactions.
+#     # We recommend adjusting this value in production.
+#     profiles_sample_rate=1.0,
+# )
 
 STORAGE_DESTINATION = env('STORAGE_DESTINATION')
 if STORAGE_DESTINATION == 's3':
@@ -90,19 +90,17 @@ if STORAGE_DESTINATION == 's3':
     AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME=env('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME=env('AWS_S3_REGION_NAME')
-    AWS_S3_CUSTOM_DOMAIN='https://%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
+    AWS_S3_CUSTOM_DOMAIN='%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
 
     # static files settings
     AWS_LOCATION = 'static'
-    # STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-    STATIC_URL = "static/"
+    STATIC_URL = f'{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
     # public media settings
     PUBLIC_MEDIA_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-    # DEFAULT_FILE_STORAGE = 'project_root.coreapp.storage_backends.PublicMediaStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'project_root.coreapp.storage_backends.PublicMediaStorage'
 else:
     STATIC_URL = "static/"
     STATIC_ROOT = "static/"
