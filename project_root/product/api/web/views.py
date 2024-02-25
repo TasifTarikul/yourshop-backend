@@ -7,7 +7,7 @@ from .serializers import ListCategorySerializer
 from project_root.product.helpers import category_restructure_in_parent_child_format
 
 class CategoryListView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     queryset = Category.objects.all()
     serializer_class = ListCategorySerializer
 
