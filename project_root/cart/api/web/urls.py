@@ -1,6 +1,12 @@
-from django.urls import path
-from .views import AddCartView
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
+
+from .views import CartViewset
+
+router = DefaultRouter(trailing_slash=False)
+router.register('web-cart', CartViewset)
 
 urlpatterns = [
-    path('add-cart/', AddCartView.as_view()),
+    path('', include(router.urls)),
 ]
