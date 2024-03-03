@@ -15,4 +15,5 @@ class CartViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return CartItem.objects.filter(user=user)
+    
 
