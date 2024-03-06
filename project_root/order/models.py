@@ -15,12 +15,13 @@ class Order(BaseModel):
     status = models.SmallIntegerField(choices=ORDER_STATUS, default=O_PENDING)
     address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='orders')
 
-class OrderItems(BaseModel):
+class OrderItem(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.PROTECT, related_name='order_items')
     qty = models.IntegerField()
     price = models.FloatField()
+    status = models.SmallIntegerField(choices=ORDER_STATUS, default=O_PENDING)
 
 class OrderReturn(BaseModel):
-    order_item = models.OneToOneField(OrderItems, on_delete=models.PROTECT)
+    order_item = models.OneToOneField(OrderItem, on_delete=models.PROTECT)
     reason = models.CharField(max_length=2000)

@@ -12,7 +12,6 @@ class AddressSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         request = self.context.get('request', None)
-        print(request.user)
         address_object = Address()
         address_object.user = request.user
         address_object.full_name = validated_data['full_name']
