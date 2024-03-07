@@ -1,5 +1,7 @@
 from django.urls import path
 
-# urlpatterns = [
-#     path('create-order/'),
-# ]
+from .views import CreateOrder
+
+urlpatterns = [
+    path('create-order/', CreateOrder.as_view()),
+]

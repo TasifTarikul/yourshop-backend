@@ -9,7 +9,7 @@ urlpatterns = [
     path('product/admin/', include('project_root.product.api.admin.urls')),
     path('cart/web/', include('project_root.cart.api.web.urls')),
     path('account/admin/', include('project_root.account.api.admin.urls')),
-    # path('order/web/', include('project_root.order.api.web.urls')),
+    path('order/web/', include('project_root.order.api.web.urls')),
     # path('order/admin/', include('project_root.order.api.admin.urls')),
 ]
 
