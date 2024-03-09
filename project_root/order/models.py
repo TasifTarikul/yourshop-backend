@@ -16,7 +16,7 @@ class Order(BaseModel):
     address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='orders')
 
 class OrderItem(BaseModel):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.PROTECT, related_name='order_items')
     qty = models.IntegerField()
     price = models.FloatField()
