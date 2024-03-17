@@ -31,7 +31,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderSerializer.Meta.model
         fields = ('total_price', 'address', 'cart_items', 'order_items')
-        
+
     
     def delete_cart_items(self, cart_item_list):
         for cart_item in cart_item_list:
@@ -56,8 +56,6 @@ class CreateOrderSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         request = self.context.get('request', None)
-        # cart_items = validated_data.pop('cart_items', None)
-        print(validated_data)
         order_object = Order()
         order_object.user = request.user.id
         order_object.order_number = generate_order_id()
