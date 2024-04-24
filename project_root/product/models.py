@@ -16,6 +16,7 @@ class Category(BaseModel):
 class Product(BaseModel):
     title = models.CharField(max_length=500)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
+    brand = models.CharField(max_length=200)
 
     def __str__(self):
         return self.title
@@ -38,6 +39,13 @@ class ProductImage(BaseModel):
     def __str__(self):
         return self.product.title
 
+class CategoryAttribute(BaseModel):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_attributes')
+    title = models.CharField(max_length=200)
+
+class CategoryAttributeValue(BaseModel):
+    category_attribute = models.ForeignKey(CategoryAttribute, on_delete=models.CASCADE, related_name='category_attribute_values')
+    title = models.CharField(max_length=200)
 
 class Attribute(BaseModel):
     title = models.CharField(max_length=200)
