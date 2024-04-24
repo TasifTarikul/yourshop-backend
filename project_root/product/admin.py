@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, ProductVariant, ProductImage,Category, Attribute 
+from .models import Product, ProductVariant, ProductImage,Category, Attribute , CategoryAttribute, CategoryAttributeValue
 
 # Register your models here.
 admin.site.register([
@@ -8,5 +8,7 @@ admin.site.register([
                         ProductVariant, 
                         ProductImage, 
                         Category, 
-                        Attribute
+                        Attribute,
+                        CategoryAttribute,
+                        CategoryAttributeValue
                     ])
