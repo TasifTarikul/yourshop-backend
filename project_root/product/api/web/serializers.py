@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from project_root.product.models import Category
+from project_root.product.models import Product
 from project_root.product.api.admin.category.serializers import CategroySerializer
+from project_root.product.api.admin.category_attribute.serializers import CategoryAttributeSerializer
+from project_root.product.api.admin.category_attribute_value.serializers import CategoryAttributeValueSerializer
 
 class ListCategorySerializer(CategroySerializer):
     
@@ -9,3 +11,9 @@ class ListCategorySerializer(CategroySerializer):
         fields['parent'] = ListCategorySerializer()
         fields['children'] = ListCategorySerializer(required=False, many=True)
         return fields
+
+class ListProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('name', 'price', 'image')
+

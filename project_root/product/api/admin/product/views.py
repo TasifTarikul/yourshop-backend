@@ -23,7 +23,7 @@ class AdminProductView(viewsets.ModelViewSet):
     def get_success_headers(self, data):
         # You can add custom headers here
         headers = super().get_success_headers(data)
-        headers['Custom-Header'] = 'some value addeds'
+        headers['Custom-Header'] = 'some value added'
         return headers
 
     def get_serializer_class(self):

@@ -27,6 +27,8 @@ class ProductVariant(BaseModel):
     qty = models.BigIntegerField()
     sku = models.CharField(max_length=100)
     description= models.TextField(max_length=5000)
+    color = models.CharField(max_length=100)
+    category_attribute_value = models.ManyToManyField('CategoryAttributeValue', related_name='product_variants')
 
     def __str__(self):
         return self.product.title + ', sku-' + self.sku
@@ -43,9 +45,15 @@ class CategoryAttribute(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_attributes')
     title = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.category.title + ' - ' + self.title
+
 class CategoryAttributeValue(BaseModel):
     category_attribute = models.ForeignKey(CategoryAttribute, on_delete=models.CASCADE, related_name='category_attribute_values')
     title = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.category_attribute.title + ' - ' + self.title
 
 class Attribute(BaseModel):
     title = models.CharField(max_length=200)
