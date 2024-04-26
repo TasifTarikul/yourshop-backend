@@ -44,7 +44,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id','title','category','product_variants','product_images')
+        fields = ('id','title','category','product_variants', 'product_images')
+
 
     # takes the list of attributes of a product variant and create product variant object
     def attribute_obj(self,product_variant_obj, attribute_list):
@@ -74,6 +75,7 @@ class ProductSerializer(serializers.ModelSerializer):
             product_variant_obj.qty = product_variant['qty']
             product_variant_obj.sku = product_variant['sku']
             product_variant_obj.description = product_variant['description']
+            product_variant_obj.category_attribute_value = product_variant['category_attribute_value']
             product_variant_obj.product = product_obj
             product_variant_obj.save()
             self.attribute_obj(product_variant_obj, product_variant['attributes'])
@@ -121,7 +123,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class UpdateCustomAttributeSerializer(CustomAttributeSerializer):
     id = serializers.IntegerField(read_only=False)
-    
+
 class UpdateCustomProductVariantSerializer(CustomProductVariantSerializer):
     id = serializers.IntegerField(read_only=False)
     attributes = UpdateCustomAttributeSerializer(many=True)

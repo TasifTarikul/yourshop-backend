@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from project_root.product.models import CategoryAttributeValue
 
-class CategoryAttributeSerializer(serializers.ModelSerializer):
+class CategoryAttributeValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoryAttributeValue
-        fields = ('category', 'title')
+        fields = ('id', 'category_attribute', 'title')
