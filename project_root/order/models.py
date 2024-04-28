@@ -25,3 +25,24 @@ class OrderItem(BaseModel):
 class OrderReturn(BaseModel):
     order_item = models.OneToOneField(OrderItem, on_delete=models.PROTECT)
     reason = models.CharField(max_length=2000)
+
+class Review(BaseModel):
+    order_item = models.OneToOneField(OrderItem, on_delete=models.CASCADE, related_name='reviews')
+    show_username = models.BooleanField(default=True)
+    description = models.CharField(max_length=700)
+
+class ProductRating(BaseModel):
+    review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name='product_rating')
+    rate = models.IntegerField(max_value=5)
+    rate_name = models.SlugField()
+    user_message = models.CharField(max_length=200)
+
+class DeliveryRating(BaseModel):
+    review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name='delivery_rating')
+    rate = models.IntegerField(max_value=5)
+    rate_name = models.SlugField()
+    user_message = models.CharField(max_length=200)
+
+class ReviewImage(BaseModel):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_images')
+    image_or_video = models.FileField()
