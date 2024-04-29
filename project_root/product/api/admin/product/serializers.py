@@ -44,7 +44,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id','title','category','product_variants', 'product_images')
+        fields = ('id','title','category','product_variants', 'product_images', 'created_at')
 
 
     # takes the list of attributes of a product variant and create product variant object
